@@ -1,15 +1,20 @@
 package tmall.servlet;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
+import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.web.util.HtmlUtils;
 import tmall.bean.*;
 import tmall.comparator.*;
 import tmall.dao.CategoryDAO;
+import tmall.dao.OrderDAO;
 import tmall.dao.ProductDAO;
 import tmall.dao.ProductImageDAO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,6 +23,7 @@ import java.util.List;
  * @date 2019/3/6
  */
 public class ForeServlet extends BaseForeServlet{
+
     public String home(HttpServletRequest request){
         List<Category> cs=categoryDAO.list();
         new ProductDAO().fill(cs);
@@ -229,4 +235,157 @@ public class ForeServlet extends BaseForeServlet{
         request.setAttribute("ois",ois);
         return "cart,jsp";
     }
+
+    public String changeOrderItem(HttpServletRequest request){
+        User user=(User) request.getSession().getAttribute("user");
+        if(user==null){
+            return "%fail";
+        }
+
+        int pid=Integer.parseInt(request.getParameter("pid"));
+        int number=Integer.parseInt(request.getParameter("number"));
+        List<OrderItem> ois=orderItemDAO.listByUser(user.getId());
+        for(OrderItem oi:ois){
+            if(oi.getProduct().getId()==pid){
+                oi.setNumber(number);
+                orderItemDAO.update(oi);
+                break;
+            }
+        }
+        return "%success";
+    }
+
+    public String deleteOrderItem(HttpServletRequest request){
+        User user=(User) request.getSession().getAttribute("user");
+        if(user==null){
+            return "%fail";
+        }
+
+        int oiid=Integer.parseInt(request.getParameter("oiid"));
+        orderItemDAO.delete(oiid);
+        return "%success";
+    }
+
+    public String createOrder(HttpServletRequest request){
+        User user =(User) request.getSession().getAttribute("user");
+        List<OrderItem> ois= (List<OrderItem>) request.getSession().getAttribute("ois");
+        if(user==null){
+            return "@login.jsp";
+        }
+
+        String address = request.getParameter("address");
+        String post = request.getParameter("post");
+        String receiver = request.getParameter("receiver");
+        String mobile = request.getParameter("mobile");
+        String userMessage = request.getParameter("userMessage");
+
+        Order order=new Order();
+        String orderCode=new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date())+ RandomUtils.nextInt(10000);
+
+        order.setOrderCode(orderCode);
+        order.setAddress(address);
+        order.setPost(post);
+        order.setReceiver(receiver);
+        order.setMobile(mobile);
+        order.setUserMessage(userMessage);
+        order.setCreateDate(new Date());
+        order.setUser(user);
+        order.setStatus(OrderDAO.WAIT_PAY);
+
+        orderDAO.add(order);
+
+        float total=0;
+        for(OrderItem oi: ois){
+            oi.setOrder(order);
+            orderItemDAO.update(oi);
+            total+=oi.getProduct().getPromotePrice()*oi.getNumber();
+        }
+
+        return "@forealipay?oid"+order.getId()+"&total"+total;
+    }
+
+    public String alipay(){
+        return "alipay.jsp";
+    }
+
+    public String payed(HttpServletRequest request){
+        int oid = Integer.parseInt(request.getParameter("oid"));
+        Order order = orderDAO.get(oid);
+        order.setStatus(OrderDAO.WAIT_DELIVERY);
+        order.setPayDate(new Date());
+        new OrderDAO().update(order);
+        request.setAttribute("o", order);
+        return "payed.jsp";
+    }
+
+    public String bought(HttpServletRequest request){
+        User user=(User) request.getSession().getAttribute("user");
+        List<Order> os=orderDAO.list(user.getId(),OrderDAO.DELETE);
+        orderItemDAO.fill(os);
+        request.setAttribute("os",os);
+        return "bought.jsp";
+    }
+
+    public String confirmPay(HttpServletRequest request){
+        int oid=Integer.parseInt(request.getParameter("oid"));
+        Order o=orderDAO.get(oid);
+        orderItemDAO.fill(o);
+        request.setAttribute("o",o);
+        return "confirmPay.jsp";
+    }
+
+    public String orderConfirmed(HttpServletRequest request) {
+        int oid = Integer.parseInt(request.getParameter("oid"));
+        Order o = orderDAO.get(oid);
+        o.setStatus(OrderDAO.WAIT_REVIEW);
+        o.setConfirmDate(new Date());
+        orderDAO.update(o);
+        return "orderConfirmed.jsp";
+    }
+
+    public String deleteOrder(HttpServletRequest request){
+        int oid = Integer.parseInt(request.getParameter("oid"));
+        Order o = orderDAO.get(oid);
+        o.setStatus(OrderDAO.DELETE);
+        orderDAO.update(o);
+        return "%success";
+    }
+
+    public String review(HttpServletRequest request){
+        int oid=Integer.parseInt(request.getParameter("oid"));
+        Order o=orderDAO.get(oid);
+        orderItemDAO.fill(o);
+
+        Product p=o.getOrderItems().get(0).getProduct();
+        List<Review> reviews=reviewDAO.list(p.getId());
+        productDAO.setSaleAndReviewNumber(p);
+
+        request.setAttribute("p",p);
+        request.setAttribute("o",o);
+        request.setAttribute("reviews",reviews);
+
+        return "review.jsp";
+    }
+
+    public String doreview(HttpServletRequest request){
+        int oid = Integer.parseInt(request.getParameter("oid"));
+        Order o = orderDAO.get(oid);
+        o.setStatus(OrderDAO.FINISH);
+        orderDAO.update(o);
+        int pid = Integer.parseInt(request.getParameter("pid"));
+        Product p = productDAO.get(pid);
+
+        String content=request.getParameter("content");
+        content=HtmlUtils.htmlEscape(content);
+        User user =(User) request.getSession().getAttribute("user");
+        Review review = new Review();
+        review.setContent(content);
+        review.setProduct(p);
+        review.setCreateDate(new Date());
+        review.setUser(user);
+        reviewDAO.add(review);
+
+        return "@forereview?oid="+oid+"&showonly=true";
+    }
+
 }

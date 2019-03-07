@@ -83,7 +83,6 @@ public class OrderDAO {
                 "payDate =? , deliveryDate =?, confirmDate = ? , " +
                 "orderCode =?, uid=?, status=? where id = ?";
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
- 
             ps.setString(1, bean.getAddress());
             ps.setString(2, bean.getPost());
             ps.setString(3, bean.getReceiver());
@@ -98,7 +97,6 @@ public class OrderDAO {
             ps.setString(12, bean.getStatus());
             ps.setInt(13, bean.getId());
             ps.execute();
- 
         } catch (SQLException e) {
             e.printStackTrace();
         }
