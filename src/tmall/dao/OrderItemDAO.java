@@ -46,10 +46,11 @@ public class OrderItemDAO {
             ps.setInt(1, bean.getProduct().getId());
             
             //there's no order information when order items are created
-            if(null==bean.getOrder())
-            	ps.setInt(2, -1);
-            else
-            	ps.setInt(2, bean.getOrder().getId());  
+            if(null==bean.getOrder()) {
+                ps.setInt(2, -1);
+            } else {
+                ps.setInt(2, bean.getOrder().getId());
+            }
             
             ps.setInt(3, bean.getUser().getId());
             ps.setInt(4, bean.getNumber());
@@ -73,10 +74,11 @@ public class OrderItemDAO {
 
 
             ps.setInt(1, bean.getProduct().getId());
-            if(null==bean.getOrder())
-            	ps.setInt(2, -1);
-            else
-            	ps.setInt(2, bean.getOrder().getId());
+            if(null==bean.getOrder()) {
+                ps.setInt(2, -1);
+            } else {
+                ps.setInt(2, bean.getOrder().getId());
+            }
             ps.setInt(3, bean.getUser().getId());
             ps.setInt(4, bean.getNumber());
             

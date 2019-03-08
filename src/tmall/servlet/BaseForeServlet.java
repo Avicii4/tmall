@@ -24,6 +24,9 @@ public class BaseForeServlet extends HttpServlet {
     protected ReviewDAO reviewDAO = new ReviewDAO();
     protected UserDAO userDAO = new UserDAO();
 
+    private static final String AT_SIGN="@";
+    private static final String PERCENT_SIGN="%";
+
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -48,9 +51,9 @@ public class BaseForeServlet extends HttpServlet {
 
             String redirect = m.invoke(this, request, response, page).toString();
 
-            if (redirect.startsWith("@")) {
+            if (redirect.startsWith(AT_SIGN)) {
                 response.sendRedirect(redirect.substring(1));
-            } else if (redirect.startsWith("%")) {
+            } else if (redirect.startsWith(PERCENT_SIGN)) {
                 response.getWriter().print(redirect.substring(1));
             } else {
                 request.getRequestDispatcher(redirect).forward(request, response);

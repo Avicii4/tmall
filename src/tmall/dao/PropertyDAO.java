@@ -12,6 +12,10 @@ import tmall.bean.Category;
 import tmall.bean.Property;
 import tmall.util.DBUtil;
 
+/**
+ * @author Harry Chou
+ * @date 2019/3/3
+ */
 public class PropertyDAO {
 
     public int getTotal(int cid) {

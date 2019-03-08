@@ -70,11 +70,8 @@ public class CategoryDAO {
     public void delete(int id) {
  
         try (Connection c = DBUtil.getConnection(); Statement s = c.createStatement()) {
- 
             String sql = "delete from Category where id = " + id;
- 
             s.execute(sql);
- 
         } catch (SQLException e) {
             e.printStackTrace();
         }

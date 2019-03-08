@@ -11,6 +11,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
  
+/**
+ * Encoding setting.
+ * @author Harry Chou
+ */
 public class EncodingFilter implements Filter {
  
     @Override
@@ -31,7 +35,6 @@ public class EncodingFilter implements Filter {
  
     @Override
     public void init(FilterConfig arg0) {
- 
     }
  
 }

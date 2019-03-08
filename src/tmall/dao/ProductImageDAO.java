@@ -19,8 +19,8 @@ import tmall.util.DBUtil;
  */
 public class ProductImageDAO {
  
-	public static final String TYPE_SINGLE = "type_single";
-	public static final String TYPE_DETAIL = "type_detail";
+	public static final String TYPE_SINGLE = "TYPE_SINGLE";
+	public static final String TYPE_DETAIL = "TYPE_DETAIL";
 	
     public int getTotal() {
         int total = 0;
