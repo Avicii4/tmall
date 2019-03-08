@@ -6,7 +6,7 @@
 
 ### 介绍
 
-* 项目分为前台（http://localhost:8080/tmall/） 和后台 （http://localhost:8080/tmall/admin） 两个部分；
+* 项目分为前台（http://localhost:8080/tmall/ ）和后台（http://localhost:8080/tmall/admin ）两个部分；
 * 由于功能模块较多，使用 Filter 和 Java 反射，简化 XML 文件的配置；
 * 后台使用同一个分页机制，减少了开发步骤。
 
