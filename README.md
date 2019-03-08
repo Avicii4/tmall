@@ -2,7 +2,7 @@
 
 使用 Servlet + JSP + Tomcat 9.0 模仿实现的天猫官网效果。
 
-![Tmall](http://github.com/Avicii4/tmall/blob/master/tmall/jpg)
+![Tmall](https://github.com/Avicii4/tmall/blob/master/tmall.jpg)
 
 ### 介绍
 
