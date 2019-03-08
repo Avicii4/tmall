@@ -21,7 +21,6 @@ public class BackServletFilter implements Filter {
     public void init(FilterConfig filterConfig) {
     }
 
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;

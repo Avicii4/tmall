@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8" isELIgnored="false"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false"%>
 	
 <div class="reviewDiv">
 	<div class="reviewProductInfoDiv">
@@ -24,7 +23,7 @@
 			</table>
 			
 			<div class="reviewProductInfoRightBelowDiv">
-				<span class="reviewProductInfoRightBelowImg"><img1 src="img/site/reviewLight.png"></span>
+				<span class="reviewProductInfoRightBelowImg"><img1 src="img/site/reviewLight.png" /></span>
 				<span class="reviewProductInfoRightBelowText" >现在查看的是 您所购买商品的信息
 于<fmt:formatDate value="${o.createDate}" pattern="yyyy年MM月dd"/>下单购买了此商品 </span>
 			

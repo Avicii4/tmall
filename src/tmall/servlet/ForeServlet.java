@@ -60,7 +60,7 @@ public class ForeServlet extends BaseForeServlet{
         name=HtmlUtils.htmlEscape(name);
         String password=request.getParameter("password");
         User user=userDAO.get(name,password);
-        if(user!=null){
+        if(user==null){
             request.setAttribute("msg","账号或密码错误");
             return "login.jsp";
         }
@@ -80,7 +80,8 @@ public class ForeServlet extends BaseForeServlet{
 
         List<ProductImage> productSingleImages=productImageDAO.list(p,ProductImageDAO.TYPE_SINGLE);
         List<ProductImage> productDetailImages=productImageDAO.list(p, ProductImageDAO.TYPE_DETAIL);
-
+        p.setProductSingleImages(productSingleImages);
+        p.setProductDetailImages(productDetailImages);
         List<PropertyValue> pvs=propertyValueDAO.list(p.getId());
         List<Review> reviews=reviewDAO.list(p.getId());
         productDAO.setSaleAndReviewNumber(p);
@@ -159,7 +160,7 @@ public class ForeServlet extends BaseForeServlet{
         int num=Integer.parseInt(request.getParameter("num"));
         Product p=productDAO.get(pid);
         int oiid = 0;
-        User user=(User)request.getSession().getAttribute("name");
+        User user=(User)request.getSession().getAttribute("user");
 
         boolean foundInCart=false;
         List<OrderItem> ois=orderItemDAO.listByUser(user.getId());
@@ -235,7 +236,7 @@ public class ForeServlet extends BaseForeServlet{
         User user=(User) request.getSession().getAttribute("user");
         List<OrderItem> ois=orderItemDAO.listByUser(user.getId());
         request.setAttribute("ois",ois);
-        return "cart,jsp";
+        return "cart.jsp";
     }
 
     public String changeOrderItem(HttpServletRequest request, HttpServletResponse response, Page page){
@@ -303,7 +304,7 @@ public class ForeServlet extends BaseForeServlet{
             total+=oi.getProduct().getPromotePrice()*oi.getNumber();
         }
 
-        return "@forealipay?oid"+order.getId()+"&total"+total;
+        return "@forealipay?oid="+order.getId()+"&total="+total;
     }
 
     public String alipay(HttpServletRequest request, HttpServletResponse response, Page page){
